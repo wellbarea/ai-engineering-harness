@@ -2,7 +2,7 @@
 
 A structured framework for shipping software with AI agents — not just generating code, but **planning, implementing, validating and auditing** every change.
 
-Built and battle-tested on a real production SaaS (80+ feature runs), now extracted as a reusable template for any project.
+Built and battle-tested across 80+ feature runs on a production SaaS, now extracted as a reusable template for any project.
 
 ---
 
@@ -173,14 +173,59 @@ Key properties:
 
 ---
 
-## Real-World Numbers
+## Real-World Example
 
-This harness was used to build a production multi-tenant SaaS ERP (Next.js + Supabase) from scratch:
+To illustrate what this looks like in practice, here's a fictional project —
+**Storefront** (a multi-tenant SaaS for retail stores built with Next.js + Supabase).
 
-- **82 numbered runs** across the project lifetime
-- Features shipped: PDV, inventory management, cash register, installment billing, Stripe subscriptions, fiscal note emission (NF-e/NFC-e), full landing page
+**Run index after ~80 features shipped:**
+
+```
+.ai/logs/runs/INDEX.md
+
+| Run      | Date       | Task                              | Status | Spec                    |
+|----------|------------|-----------------------------------|--------|-------------------------|
+| run_0001 | 2025-01-10 | product catalog CRUD              | done   | specs/catalog/          |
+| run_0002 | 2025-01-12 | inventory movement triggers       | done   | specs/inventory/        |
+| run_0015 | 2025-02-03 | Stripe subscription billing       | done   | specs/billing/          |
+| run_0031 | 2025-03-18 | point-of-sale barcode scanner     | done   | specs/pos/              |
+| run_0047 | 2025-04-22 | installment payment module        | done   | specs/installments/     |
+| run_0062 | 2025-05-30 | password recovery flow            | done   | -                       |
+| run_0080 | 2025-06-14 | bulk product import via CSV       | done   | specs/product-import/   |
+```
+
+**A decision that outlived its run:**
+
+```markdown
+# .ai/decisions/2025-03-01-inventory-update-via-trigger.md
+
+Decision: inventory quantity is updated only via a Postgres trigger on the
+movements table — never via a direct UPDATE to the products table.
+
+Reason: two concurrent sales were tested and produced negative stock when
+using application-level sequential updates. The trigger + SELECT FOR UPDATE
+lock eliminates the race condition at the database level.
+
+Impact: any feature touching inventory must go through the movements table,
+not products directly. Architect agent checks this on every inventory-adjacent run.
+```
+
+**A spec that kept QA honest:**
+
+```markdown
+# .ai/specs/pos/product.md — Acceptance Criteria (excerpt)
+
+- [ ] Scanning an out-of-stock barcode shows "Insufficient stock" toast, does not add to cart
+- [ ] Products with `track_inventory: false` can always be added regardless of stock level
+- [ ] Completing a sale with an empty cart is blocked at the action layer, not only in UI
+- [ ] Session expiry mid-sale redirects to login without losing the cart (localStorage)
+```
+
+**Outcome after 80 runs:**
 - Zero production incidents caused by a quality gate being skipped
-- Every architectural decision has a written rationale in `.ai/decisions/`
+- Every non-obvious architectural call has a written rationale in `.ai/decisions/`
+- Failures from early runs (e.g. the inventory race condition above) became
+  permanent rules checked on every subsequent run touching that area
 
 ---
 
@@ -198,4 +243,4 @@ MIT — use it, adapt it, share it.
 
 ---
 
-*Built by [Wellington Barea](https://github.com/wellbarea) while shipping a real product with Claude Code.*
+*Built while shipping a real product with Claude Code.*
