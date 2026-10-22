@@ -1,0 +1,22 @@
+{
+  "run_id": "",
+  "task": "",
+  "workflow": "",
+  "started_at": "",
+  "finished_at": "",
+  "status": "",
+  "agents": [],
+  "files_changed": [],
+  "tests": {
+    "unit": null,
+    "integration": null,
+    "e2e": null,
+    "accessibility": null
+  },
+  "quality_gates": [],
+  "failures": [],
+  "corrections": [],
+  "decisions": [],
+  "human_approval": false,
+  "commit": null
+}

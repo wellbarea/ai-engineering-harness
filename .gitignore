@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+.next/
+dist/
+out/
+build/
+
+# Package managers
+.yarn/
+pnpm-lock.yaml
+package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Claude Code local settings (contains machine-specific paths and API keys)
+.claude/settings.local.json
+
+# QA session state (contains auth tokens — never commit)
+.ai/qa/storage-state.json
